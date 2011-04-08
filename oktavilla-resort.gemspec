@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "resort/version"
 
 Gem::Specification.new do |s|
-  s.name        = "resort"
+  s.name        = "oktavilla-resort"
   s.version     = Resort::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Oriol Gual", "Josep M. Bach", "Josep Jaume Rey"]
