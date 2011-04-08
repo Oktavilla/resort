@@ -83,7 +83,7 @@ module Resort
         scoped.where(:next_id => nil).first
       end
 
-      
+
       # Returns eager-loaded Components in order.
       #
       # OPTIMIZE: Use IdentityMap when available
@@ -93,18 +93,23 @@ module Resort
         elements = {}
 
         scoped.each do |element|
-          if element.first?
+          if element.first? && ordered_elements.empty?
             ordered_elements << element
           else
             elements[element.id] = element
           end
         end
 
-        raise "Multiple or no first items in the list where found. Consider defining a siblings method" if ordered_elements.length != 1 && elements.length > 0
-        
         elements.length.times do
-          ordered_elements << elements[ordered_elements.last.next_id]
+          if ordered_elements.last && elements[ordered_elements.last.next_id]
+            ordered_elements << elements[ordered_elements.last.next_id]
+          end
         end
+
+        unless ordered_elements.size == scoped.size
+          ordered_elements = scoped.all
+        end
+
         ordered_elements.compact
       end
     end
@@ -184,9 +189,9 @@ module Resort
           end
 
           unless frozen?
-            self.first = false 
-            self.next = nil 
-            self.previous = nil 
+            self.first = false
+            self.next = nil
+            self.previous = nil
             save!
           end
         end

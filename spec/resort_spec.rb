@@ -59,6 +59,16 @@ module Resort
           end
         end
 
+        describe "#ordered with faulty referentials" do
+          before do
+            @article2.update_attribute(:next_id, @article1.id)
+          end
+
+          it 'returns all elements unsorted' do
+            Article.ordered.should == [@article1, @article2, @article3, @article4].reverse
+          end
+        end
+
         after do
           Article.destroy_all
         end
@@ -97,10 +107,10 @@ module Resort
           List.find_by_name('My other list').items.ordered.map(&:name).should == ['My other list item 0', 'My other list item 1', 'My other list item 2', 'My other list item 3']
         end
 
-        it 'raises when ordering without scope' do
+        it 'does not raise when ordering without scope' do
           expect {
             ListItem.ordered
-          }.to raise_error
+          }.not_to raise_error
         end
       end
 
@@ -240,7 +250,7 @@ module Resort
         @article3 = Article.find_by_name('3')
         @article4 = Article.find_by_name('4')
       end
-      
+
       describe "#push" do
         it "appends the element to the list" do
           @article1.push
@@ -327,7 +337,7 @@ module Resort
 
             article1 = Article.find_by_name('1')
             article1.next.name.should == '3'
-            
+
             article2 = Article.find_by_name('2')
             article2.previous.name.should == '3'
             article2.next.name.should == '4'
@@ -375,7 +385,7 @@ module Resort
 
             article1 = Article.find_by_name('1')
             article1.next.name.should == '3'
-            
+
             article2 = Article.find_by_name('2')
             article2.previous.name.should == '3'
             article2.next.name.should == '4'
